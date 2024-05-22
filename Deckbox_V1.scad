@@ -41,7 +41,10 @@ boxSlev = boxDeck + [bigSlev[0], 0, 0];
 
 
 
-
+/*
+    Make BOTTOM Half of deckbox
+*/
+module bottomHalf() {
 // Difference to refine shape
 difference() {
     // Make the big shape
@@ -77,6 +80,43 @@ difference() {
 
 }
 
+}
+
+/*
+    Make TOP Half of deckbox
+*/
+module topHalf() {
+difference() {
+    // Make a box that's the total of inner+shell
+    cube(boxSlev);
+    
+    
+    // Cut out 
+    
+    
+    // Cut out the center box for the cards
+    translate(oShell + [0,0,oShell[2]]) 
+        cube(inSpace + [0,0,tbO]);
+    
+    
+    // Cut out the space for the Big Sleeve
+    translate(oShell + [inSpace[0]+(oShell[0]/2), (oShell[1]/2), 0]) {
+        cube(bigSlev);
+    
+    // Cut out the viewport for the Big Sleeve
+        translate([oShell[0]/2+y, slevEdge, slevEdge])
+            cube(bigSlev - 2*[0, slevEdge, slevEdge]);
+    }
+
+}
+
+}
+
+
+
+//bottomHalf();
+
+topHalf();
 
 
 
