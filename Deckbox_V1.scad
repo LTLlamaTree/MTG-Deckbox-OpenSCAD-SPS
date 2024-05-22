@@ -99,18 +99,17 @@ module topHalf() {
         // Make a box that's the total of inner+shell
         cube(boxSlev);
         
-        
         // Cut out inner ribbon for the join
         translate([
-            (oShell[0]/2)-(p/2), 
-            (oShell[1]/2)-(p/2), 
-            (inSpace[2]+(2*oShell[2])-tbO+y)
-            ])
-                cube([
-                (inSpace[0]+oShell[0]+bigSlev[0]+p), 
-                (inSpace[1]+oShell[1]+p), 
-                tbO
-                ]);
+        (oShell[0]/2)-(p/2), 
+        (oShell[1]/2)-(p/2), 
+        (inSpace[2]+(2*oShell[2])-tbO+y)
+        ])
+            cube([
+            (inSpace[0]+oShell[0]+bigSlev[0]+p), 
+            (inSpace[1]+oShell[1]+p), 
+            tbO
+            ]);
         
         
         // Cuts space for Deck, Big Sleeve, Viewport
