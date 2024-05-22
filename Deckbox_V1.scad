@@ -58,20 +58,18 @@ module cutSpace() {
             cube(bigSlev - 2*[0, slevEdge, slevEdge]);
     }
 }
-    
-
 
 
 /*
     Make BOTTOM Half of deckbox
 */
 module bottomHalf() {
-// Difference to refine shape
-difference() {
-    // Make the big shape
-    union() {
-        // Make a box that's the total of inner+shell
-        cube(boxSlev);
+    // Difference to refine shape
+    difference() {
+        // Make the big shape
+        union() {
+            // Make a box that's the total of inner+shell
+            cube(boxSlev);
             // Make cube for ribbon
             translate([
             (oShell[0]/2)+(p/2), 
@@ -83,26 +81,27 @@ difference() {
                 (inSpace[1]+oShell[1]-p), 
                 tbO
                 ]);
+        }
+        
+        // Cuts space for Deck, Big Sleeve, Viewport
+        cutSpace();
+
     }
-    
-    // Cuts space for Deck, Big Sleeve, Viewport
-    cutSpace();
 
 }
 
-}
 
 /*
     Make TOP Half of deckbox
 */
 module topHalf() {
-difference() {
-    // Make a box that's the total of inner+shell
-    cube(boxSlev);
-    
-    
-    // Cut out inner ribbon for the join
-    translate([
+    difference() {
+        // Make a box that's the total of inner+shell
+        cube(boxSlev);
+        
+        
+        // Cut out inner ribbon for the join
+        translate([
             (oShell[0]/2)-(p/2), 
             (oShell[1]/2)-(p/2), 
             (inSpace[2]+(2*oShell[2])-tbO+y)
@@ -112,12 +111,12 @@ difference() {
                 (inSpace[1]+oShell[1]+p), 
                 tbO
                 ]);
-    
-    
-    // Cuts space for Deck, Big Sleeve, Viewport
-    cutSpace();
+        
+        
+        // Cuts space for Deck, Big Sleeve, Viewport
+        cutSpace();
 
-}
+    }
 
 }
 
