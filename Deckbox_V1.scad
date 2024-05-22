@@ -15,7 +15,7 @@
 */
 
 // Gamma for making things render nicely
-y = 0.02;
+y = 0.005;
 // Rho for accounting for material expansion
 p = 0.2;
 
@@ -38,6 +38,27 @@ tbO = 5;
 boxDeck = inSpace + (2*oShell);
 // Add on enough space for the big sleeve
 boxSlev = boxDeck + [bigSlev[0], 0, 0];
+
+
+/*
+    Models the space for the Deck, Big Sleeve, Viewport
+*/
+module cutSpace() {
+    // Cut out the center box for the cards
+    translate(oShell + [0,0,oShell[2]]) 
+        cube(inSpace + [0,0,tbO]);
+    
+    
+    // Cut out the space for the Big Sleeve
+    translate(oShell + [inSpace[0]+(oShell[0]/2), (oShell[1]/2), 0]) {
+        cube(bigSlev);
+    
+    // Cut out the viewport for the Big Sleeve
+        translate([oShell[0]/2+y, slevEdge, slevEdge])
+            cube(bigSlev - 2*[0, slevEdge, slevEdge]);
+    }
+}
+    
 
 
 
@@ -64,19 +85,8 @@ difference() {
                 ]);
     }
     
-    // Cut out the center box for the cards
-    translate(oShell + [0,0,oShell[2]]) 
-        cube(inSpace + [0,0,tbO]);
-    
-    
-    // Cut out the space for the Big Sleeve
-    translate(oShell + [inSpace[0]+(oShell[0]/2), (oShell[1]/2), 0]) {
-        cube(bigSlev);
-    
-    // Cut out the viewport for the Big Sleeve
-        translate([oShell[0]/2+y, slevEdge, slevEdge])
-            cube(bigSlev - 2*[0, slevEdge, slevEdge]);
-    }
+    // Cuts space for Deck, Big Sleeve, Viewport
+    cutSpace();
 
 }
 
@@ -91,22 +101,21 @@ difference() {
     cube(boxSlev);
     
     
-    // Cut out 
+    // Cut out inner ribbon for the join
+    translate([
+            (oShell[0]/2)-(p/2), 
+            (oShell[1]/2)-(p/2), 
+            (inSpace[2]+(2*oShell[2])-tbO+y)
+            ])
+                cube([
+                (inSpace[0]+oShell[0]+bigSlev[0]+p), 
+                (inSpace[1]+oShell[1]+p), 
+                tbO
+                ]);
     
     
-    // Cut out the center box for the cards
-    translate(oShell + [0,0,oShell[2]]) 
-        cube(inSpace + [0,0,tbO]);
-    
-    
-    // Cut out the space for the Big Sleeve
-    translate(oShell + [inSpace[0]+(oShell[0]/2), (oShell[1]/2), 0]) {
-        cube(bigSlev);
-    
-    // Cut out the viewport for the Big Sleeve
-        translate([oShell[0]/2+y, slevEdge, slevEdge])
-            cube(bigSlev - 2*[0, slevEdge, slevEdge]);
-    }
+    // Cuts space for Deck, Big Sleeve, Viewport
+    cutSpace();
 
 }
 
@@ -114,9 +123,10 @@ difference() {
 
 
 
-//bottomHalf();
+bottomHalf();
 
-topHalf();
+translate([0, 1.1*boxSlev[1], 0])
+    topHalf();
 
 
 
