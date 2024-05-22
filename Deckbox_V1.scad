@@ -44,7 +44,9 @@ difference() {
     }
     
     // Cut out the center box for the cards
-
+    translate(oShell) {
+        cube(inSpace + [0,0,tbO]);
+    }
     
 
 }
