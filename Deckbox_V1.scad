@@ -1,4 +1,10 @@
 
+/*
+    Default deckbox shape
+    Box joins at center with a bit of overlap
+    Has a spot for a Toploader sleeve to show commander
+*/
+
 
 /*
     Dimensions for objects
