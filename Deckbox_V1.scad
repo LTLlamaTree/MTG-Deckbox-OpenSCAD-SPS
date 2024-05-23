@@ -34,7 +34,7 @@ bigSlev = [3, 76, 103];
 slevEdge = 3;
 
 // Define shell dimensions
-oShell = [4, 4, 4];
+oShell = [4, 4, 2];
 
 // Define length of overlap for top/bottom halves
 tbO = 5;
