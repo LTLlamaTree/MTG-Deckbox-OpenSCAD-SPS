@@ -21,15 +21,15 @@
 */
 
 // Gamma for making things render nicely
-y = 0.005;
+g = 0.005;
 // Rho for accounting for material expansion
-p = 0.2;
+p = 0.4;
 
 // Define inner space
-inSpace = [70, 80, 50];
+inSpace = [70, 80, 12];
 
 // Define Big Sleeve dimensions
-bigSlev = [3, 76, 103];
+bigSlev = [2.6, 76, 103];
 // Define Big Sleeve edge width
 slevEdge = 3;
 
@@ -37,7 +37,7 @@ slevEdge = 3;
 oShell = [4, 4, 2];
 
 // Define length of overlap for top/bottom halves
-tbO = 5;
+tbO = 10;
 
 
 // Make dimensions for half of box to fit /DECK/
@@ -60,7 +60,7 @@ module cutSpace() {
         cube(bigSlev);
     
     // Cut out the viewport for the Big Sleeve
-        translate([oShell[0]/2+y, slevEdge, slevEdge])
+        translate([oShell[0]/2+g, slevEdge, slevEdge])
             cube(bigSlev - 2*[0, slevEdge, slevEdge]);
     }
 }
@@ -78,13 +78,13 @@ module bottomHalf() {
             cube(boxSlev);
             // Make cube for ribbon
             translate([
-            (oShell[0]/2)+(p/2), 
-            (oShell[1]/2)+(p/2), 
-            (inSpace[2]+(2*oShell[2])-y)
+            (oShell[0]/2), 
+            (oShell[1]/2), 
+            (inSpace[2]+(2*oShell[2])-g)
             ])
                 cube([
-                (inSpace[0]+oShell[0]+bigSlev[0]-p), 
-                (inSpace[1]+oShell[1]-p), 
+                (inSpace[0]+oShell[0]+bigSlev[0]-g), 
+                (inSpace[1]+oShell[1]), 
                 tbO
                 ]);
         }
@@ -107,13 +107,13 @@ module topHalf() {
         
         // Cut out inner ribbon for the join
         translate([
-        (oShell[0]/2)-(p/2), 
-        (oShell[1]/2)-(p/2), 
-        (inSpace[2]+(2*oShell[2])-tbO+y)
+        (oShell[0]/2)-p, 
+        (oShell[1]/2)-p, 
+        (inSpace[2]+(2*oShell[2])-tbO+g)
         ])
             cube([
-            (inSpace[0]+oShell[0]+bigSlev[0]+p), 
-            (inSpace[1]+oShell[1]+p), 
+            (inSpace[0]+oShell[0]+bigSlev[0]+(2*p)), 
+            (inSpace[1]+oShell[1]+(2*p)), 
             tbO
             ]);
         
