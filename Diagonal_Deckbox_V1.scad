@@ -39,3 +39,26 @@ oShell = [4, 4, 4];
 tbO = 5;
 
 
+
+
+/*
+    Module to create the bottom half of the box
+*/
+module bottomDiag() {
+    // Union to combine the bottom shell with the deck-holding part
+    union() {
+        // Makes bottom layer for shell
+        cube(oShell + [inSpace[0], inSpace[1], 0]);
+        
+        
+    }
+    
+}
+
+
+
+bottomDiag();
+
+
+
+
