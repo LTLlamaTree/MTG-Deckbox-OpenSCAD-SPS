@@ -47,6 +47,19 @@ boxSlev = boxDeck + [bigSlev[0], 0, 0];
 
 
 /*
+    Reduces bottom density for testing.
+*/
+module cutBottom() {
+    translate((2*oShell) + [1, 1, -(2*oShell[2])-g])
+        cube([
+        inSpace[0]-(2.5*oShell[0]), 
+        inSpace[1]-(2.5*oShell[1]), 
+        (2*oShell[2])+(2*g)
+        ]);
+}
+
+
+/*
     Models the space for the Deck, Big Sleeve, Viewport
 */
 module cutSpace() {
@@ -91,6 +104,9 @@ module bottomHalf() {
         
         // Cuts space for Deck, Big Sleeve, Viewport
         cutSpace();
+        
+        // Cuts bottom, uncomment for testing
+        cutBottom();
 
     }
 
@@ -120,6 +136,9 @@ module topHalf() {
         
         // Cuts space for Deck, Big Sleeve, Viewport
         cutSpace();
+        
+        // Cuts bottom, uncomment for testing
+        cutBottom();
 
     }
 
