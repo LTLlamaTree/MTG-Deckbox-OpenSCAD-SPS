@@ -83,31 +83,33 @@ module cutSpace() {
     Make BOTTOM Half of deckbox
 */
 module bottomHalf() {
-    // Difference to refine shape
-    difference() {
-        // Make the big shape
-        union() {
-            // Make a box that's the total of inner+shell
-            cube(boxSlev);
-            // Make cube for ribbon
-            translate([
-            (oShell[0]/2), 
-            (oShell[1]/2), 
-            (inSpace[2]+(2*oShell[2])-g)
-            ])
-                cube([
-                (inSpace[0]+oShell[0]+bigSlev[0]-g), 
-                (inSpace[1]+oShell[1]), 
-                tbO
-                ]);
-        }
-        
-        // Cuts space for Deck, Big Sleeve, Viewport
-        cutSpace();
-        
-        // Cuts bottom, uncomment for testing
-        cutBottom();
+    translate([-oShell[0]-(inSpace[0]/2), -oShell[1]-(inSpace[1]/2), 0]) {
+        // Difference to refine shape
+        difference() {
+            // Make the big shape
+            union() {
+                // Make a box that's the total of inner+shell
+                cube(boxSlev);
+                // Make cube for ribbon
+                translate([
+                (oShell[0]/2), 
+                (oShell[1]/2), 
+                (inSpace[2]+(2*oShell[2])-g)
+                ])
+                    cube([
+                    (inSpace[0]+oShell[0]+bigSlev[0]-g), 
+                    (inSpace[1]+oShell[1]), 
+                    tbO
+                    ]);
+            }
+            
+            // Cuts space for Deck, Big Sleeve, Viewport
+            cutSpace();
+            
+            // Cuts bottom, uncomment for testing
+            cutBottom();
 
+        }
     }
 
 }
@@ -117,29 +119,31 @@ module bottomHalf() {
     Make TOP Half of deckbox
 */
 module topHalf() {
-    difference() {
-        // Make a box that's the total of inner+shell
-        cube(boxSlev);
-        
-        // Cut out inner ribbon for the join
-        translate([
-        (oShell[0]/2)-p, 
-        (oShell[1]/2)-p, 
-        (inSpace[2]+(2*oShell[2])-tbO+g)
-        ])
-            cube([
-            (inSpace[0]+oShell[0]+bigSlev[0]+(2*p)), 
-            (inSpace[1]+oShell[1]+(2*p)), 
-            tbO
-            ]);
-        
-        
-        // Cuts space for Deck, Big Sleeve, Viewport
-        cutSpace();
-        
-        // Cuts bottom, uncomment for testing
-        cutBottom();
+    translate([-oShell[0]-(inSpace[0]/2), -oShell[1]-(inSpace[1]/2), 0]) {
+        difference() {
+            // Make a box that's the total of inner+shell
+            cube(boxSlev);
+            
+            // Cut out inner ribbon for the join
+            translate([
+            (oShell[0]/2)-p, 
+            (oShell[1]/2)-p, 
+            (inSpace[2]+(2*oShell[2])-tbO+g)
+            ])
+                cube([
+                (inSpace[0]+oShell[0]+bigSlev[0]+(2*p)), 
+                (inSpace[1]+oShell[1]+(2*p)), 
+                tbO
+                ]);
+            
+            
+            // Cuts space for Deck, Big Sleeve, Viewport
+            cutSpace();
+            
+            // Cuts bottom, uncomment for testing
+            cutBottom();
 
+        }
     }
 
 }
