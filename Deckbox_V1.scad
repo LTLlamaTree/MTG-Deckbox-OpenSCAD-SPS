@@ -20,6 +20,11 @@
         3mm / 77mm / 103mm
 */
 
+// Includes from BOSL
+include <BOSL/constants.scad>
+use <BOSL/shapes.scad>
+use <BOSL/transforms.scad>
+
 // Gamma for making things render nicely
 g = 0.005;
 // Rho for accounting for material expansion
@@ -38,6 +43,9 @@ oShell = [3.2, 3.2, 1.6];
 
 // Define length of overlap for top/bottom halves
 tbO = 10;
+
+// Define radius for grip posts
+postRad = 3;
 
 
 // Make dimensions for half of box to fit /DECK/
@@ -76,6 +84,30 @@ module cutSpace() {
         translate([oShell[0]/2+g, slevEdge, slevEdge])
             cube(bigSlev - 2*[0, slevEdge, slevEdge]);
     }
+}
+
+
+/* 
+    Models the catches on the lid
+*/
+module lidCatch() {
+    xflip_copy()
+    yflip_copy()
+    translate([
+    oShell[0]+(inSpace[0]/4), 
+    oShell[1]+(inSpace[1]/2), 
+    inSpace[2]-(tbO/5)
+    ])
+        intersection() {
+            sphere(r = postRad, $fn=16);
+        }
+}
+
+/*
+    Models the catch-holes on the base
+*/
+module baseCatch() {
+    
 }
 
 
@@ -144,15 +176,19 @@ module topHalf() {
             cutBottom();
 
         }
+        
+        
     }
+    // Adds the catch posts
+    lidCatch();
 
 }
 
 
 
-bottomHalf();
-
-translate([0, 1.1*boxSlev[1], 0])
+//bottomHalf();
+//
+//translate([0, 1.1*boxSlev[1], 0])
     topHalf();
 
 
