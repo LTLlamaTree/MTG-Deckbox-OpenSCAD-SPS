@@ -30,11 +30,16 @@ g = 0.005;
 // Rho for accounting for material expansion
 p = 0.4;
 
+
+// Disable/Enable testing
+testActive = false;
+
 // Define scale factor for testing
-testScale = 0.4;
+testScale = testActive ? 0.4 : 1.0;
+
 
 // Define inner space
-inSpace = [68*testScale, 80*testScale, 12];
+inSpace = [68*testScale, 80*testScale, (testActive ? 12 : 50)];
 
 // Define Big Sleeve dimensions
 bigSlev = [2.6, 76*testScale, 103];
@@ -51,7 +56,7 @@ tbO = 10;
 postRad = 3;
 
 // Define inverse-depth for grid posts
-postDep = 0.4;
+postDep = 0.7;
 
 
 // Make dimensions for half of box to fit /DECK/
@@ -102,9 +107,10 @@ module lidCatch() {
         yflip_copy()
         translate([
         oShell[0]+(inSpace[0]/4), 
-        oShell[1]+(inSpace[1]/2)+postDep, 
+        oShell[1]+(inSpace[1]/2)-(postDep/3), 
         inSpace[2]-(tbO/5)
         ])
+            scale([1.2,0.6,1.2])
             sphere(r = postRad, $fn=16);
         
         translate([
@@ -168,7 +174,7 @@ module bottomHalf() {
                 cutSpace();
                 
                 // Cuts bottom, uncomment for testing
-                cutBottom();
+                if (testActive) cutBottom();
                 
                 
 
@@ -208,7 +214,7 @@ module topHalf() {
             cutSpace();
             
             // Cuts bottom, uncomment for testing
-            cutBottom();
+            if (testActive) cutBottom();
 
         }
         
