@@ -43,7 +43,7 @@ p = 0.4;
 
 
 // Disable/Enable testing
-testActive = true;
+testActive = false;
 
 // Define scale factor for testing
 testScale = testActive ? 0.4 : 1.0;
@@ -53,7 +53,7 @@ testScale = testActive ? 0.4 : 1.0;
 inSpace = [68*testScale, 80*testScale, (testActive ? 12 : 50)];
 
 // Define Big Sleeve dimensions
-bigSlev = [2.6, 76*testScale, 103];
+bigSlev = [2, 76*testScale, 103];
 // Define Big Sleeve edge width
 slevEdge = 3;
 
@@ -99,7 +99,7 @@ module cutSpace() {
     
     
     // Cut out the space for the Big Sleeve
-    translate(oShell + [inSpace[0]+(oShell[0]/2), (oShell[1]/2), 0]) {
+    translate(oShell + [inSpace[0]+(oShell[0]/2), 2, 0]) {
         cube(bigSlev);
     
     // Cut out the viewport for the Big Sleeve
@@ -171,13 +171,13 @@ module bottomHalf() {
                     
                     // Make cube for ribbon
                     translate([
-                    (oShell[0]/2)+(p/2), 
-                    (oShell[1]/2)+(p/2), 
+                    (oShell[0]/2), 
+                    (oShell[1]/2), 
                     (inSpace[2]+(2*oShell[2])-g)
                     ])
                         cube([
-                        (inSpace[0]+oShell[0]+bigSlev[0]-p), 
-                        (inSpace[1]+oShell[1]-p), 
+                        (inSpace[0]+oShell[0]+bigSlev[0]-g), 
+                        (inSpace[1]+oShell[1]), 
                         tbO
                         ]);
                         }
@@ -211,13 +211,13 @@ module topHalf() {
             
             // Cut out inner ribbon for the join
             translate([
-            (oShell[0]/2)-(p/2), 
-            (oShell[1]/2)-(p/2), 
+            (oShell[0]/2)-p, 
+            (oShell[1]/2)-p, 
             (inSpace[2]+(2*oShell[2])-tbO+g)
             ])
                 cube([
-                (inSpace[0]+oShell[0]+bigSlev[0]+p), 
-                (inSpace[1]+oShell[1]+p), 
+                (inSpace[0]+oShell[0]+bigSlev[0]+(2*p)), 
+                (inSpace[1]+oShell[1]+(2*p)), 
                 tbO
                 ]);
             
