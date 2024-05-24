@@ -43,7 +43,7 @@ p = 0.4;
 
 
 // Disable/Enable testing
-testActive = false;
+testActive = true;
 
 // Define scale factor for testing
 testScale = testActive ? 0.4 : 1.0;
@@ -121,7 +121,7 @@ module lidCatch() {
         oShell[1]+(inSpace[1]/2)-(postDep/3), 
         inSpace[2]-(tbO/5)
         ])
-            scale([1.2,0.6,1.2])
+            scale([1.4,0.6,1.4])
             sphere(r = postRad, $fn=16);
         
         translate([
