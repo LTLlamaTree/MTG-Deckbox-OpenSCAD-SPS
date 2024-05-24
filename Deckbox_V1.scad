@@ -30,11 +30,14 @@ g = 0.005;
 // Rho for accounting for material expansion
 p = 0.4;
 
+// Define scale factor for testing
+testScale = 0.4;
+
 // Define inner space
-inSpace = [68, 80, 12];
+inSpace = [68*testScale, 80*testScale, 12];
 
 // Define Big Sleeve dimensions
-bigSlev = [2.6, 76, 103];
+bigSlev = [2.6, 76*testScale, 103];
 // Define Big Sleeve edge width
 slevEdge = 3;
 
@@ -46,6 +49,9 @@ tbO = 10;
 
 // Define radius for grip posts
 postRad = 3;
+
+// Define inverse-depth for grid posts
+postDep = 0.4;
 
 
 // Make dimensions for half of box to fit /DECK/
@@ -91,23 +97,41 @@ module cutSpace() {
     Models the catches on the lid
 */
 module lidCatch() {
-    xflip_copy()
-    yflip_copy()
-    translate([
-    oShell[0]+(inSpace[0]/4), 
-    oShell[1]+(inSpace[1]/2), 
-    inSpace[2]-(tbO/5)
-    ])
-        intersection() {
+    intersection() {
+        xflip_copy()
+        yflip_copy()
+        translate([
+        oShell[0]+(inSpace[0]/4), 
+        oShell[1]+(inSpace[1]/2)+postDep, 
+        inSpace[2]-(tbO/5)
+        ])
             sphere(r = postRad, $fn=16);
-        }
+        
+        translate([
+        -oShell[0]-(inSpace[0]/2), 
+        -oShell[1]-(inSpace[1]/2), 
+        0
+        ])
+            cube(boxSlev);
+    }
+        
 }
 
 /*
     Models the catch-holes on the base
 */
 module baseCatch() {
-    
+        xflip_copy()
+        yflip_copy()
+        translate([
+        oShell[0]+(inSpace[0]/4), 
+        oShell[1]+(inSpace[1]/2)+postDep, 
+        inSpace[2]+(4*tbO/5)
+        ])
+            xrot(90)
+            cylinder(h=postRad, r = postRad, $fn=16);
+        
+        
 }
 
 
@@ -115,34 +139,45 @@ module baseCatch() {
     Make BOTTOM Half of deckbox
 */
 module bottomHalf() {
-    translate([-oShell[0]-(inSpace[0]/2), -oShell[1]-(inSpace[1]/2), 0]) {
-        // Difference to refine shape
-        difference() {
-            // Make the big shape
-            union() {
-                // Make a box that's the total of inner+shell
-                cube(boxSlev);
-                // Make cube for ribbon
-                translate([
-                (oShell[0]/2), 
-                (oShell[1]/2), 
-                (inSpace[2]+(2*oShell[2])-g)
-                ])
-                    cube([
-                    (inSpace[0]+oShell[0]+bigSlev[0]-g), 
-                    (inSpace[1]+oShell[1]), 
-                    tbO
-                    ]);
-            }
-            
-            // Cuts space for Deck, Big Sleeve, Viewport
-            cutSpace();
-            
-            // Cuts bottom, uncomment for testing
-            cutBottom();
+    difference() {
+        translate([
+        -oShell[0]-(inSpace[0]/2), 
+        -oShell[1]-(inSpace[1]/2), 
+        0
+        ]) {
+            // Difference to refine shape
+            difference() {
+                // Make the big shape
+                union() {
+                    // Make a box that's the total of inner+shell
+                    cube(boxSlev);
+                    // Make cube for ribbon
+                    translate([
+                    (oShell[0]/2), 
+                    (oShell[1]/2), 
+                    (inSpace[2]+(2*oShell[2])-g)
+                    ])
+                        cube([
+                        (inSpace[0]+oShell[0]+bigSlev[0]-g), 
+                        (inSpace[1]+oShell[1]), 
+                        tbO
+                        ]);
+                }
+                
+                // Cuts space for Deck, Big Sleeve, Viewport
+                cutSpace();
+                
+                // Cuts bottom, uncomment for testing
+                cutBottom();
+                
+                
 
+            }
         }
+        // Adds holes for catches
+           baseCatch();
     }
+    
 
 }
 
@@ -186,9 +221,9 @@ module topHalf() {
 
 
 
-//bottomHalf();
-//
-//translate([0, 1.1*boxSlev[1], 0])
+bottomHalf();
+
+translate([0, 1.1*boxSlev[1], 0])
     topHalf();
 
 
