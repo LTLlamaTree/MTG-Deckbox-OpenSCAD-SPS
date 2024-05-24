@@ -5,9 +5,20 @@
     Has a spot for a Toploader sleeve to show commander
 */
 
+/*
+    Dimensions of objects
+    Big Sleeve (Toploader):
+        1.6/76/100.4
+    
+    Inside current box:
+        71/76.2/...
+    
+    Deck itself:
+        67/76.2/93
+*/
 
 /*
-    Dimensions for objects
+    Dimensions for writing
     Inner box space
         70mm / 80mm / 100mm
         -> Need half of this vertically
