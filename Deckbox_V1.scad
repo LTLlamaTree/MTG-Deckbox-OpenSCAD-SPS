@@ -26,7 +26,7 @@ g = 0.005;
 p = 0.4;
 
 // Define inner space
-inSpace = [70, 80, 12];
+inSpace = [68, 80, 12];
 
 // Define Big Sleeve dimensions
 bigSlev = [2.6, 76, 103];
@@ -34,7 +34,7 @@ bigSlev = [2.6, 76, 103];
 slevEdge = 3;
 
 // Define shell dimensions
-oShell = [4, 4, 2];
+oShell = [3.2, 3.2, 1.6];
 
 // Define length of overlap for top/bottom halves
 tbO = 10;
