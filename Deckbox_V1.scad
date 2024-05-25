@@ -99,7 +99,7 @@ module cutSpace() {
     
     
     // Cut out the space for the Big Sleeve
-    translate(oShell + [inSpace[0]+(oShell[0]/2), 2, 0]) {
+    translate(oShell + [inSpace[0]+(oShell[0]/2), (2*testScale), 0]) {
         cube(bigSlev);
     
     // Cut out the viewport for the Big Sleeve
@@ -121,7 +121,7 @@ module lidCatch() {
         oShell[1]+(inSpace[1]/2)-(postDep/3), 
         inSpace[2]-(tbO/5)
         ])
-            scale([1.4,0.6,1.4])
+            scale([1.3,0.6,1.3])
             sphere(r = postRad, $fn=16);
         
         translate([
@@ -216,7 +216,7 @@ module topHalf() {
             (inSpace[2]+(2*oShell[2])-tbO+g)
             ])
                 cube([
-                (inSpace[0]+oShell[0]+bigSlev[0]+(2*p)), 
+                (inSpace[0]+oShell[0]+bigSlev[0]+p), 
                 (inSpace[1]+oShell[1]+(2*p)), 
                 tbO
                 ]);
