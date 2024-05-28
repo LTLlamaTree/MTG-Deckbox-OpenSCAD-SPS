@@ -60,6 +60,7 @@ slevEdge = 3;
 // Define shell dimensions
 oShell = [3.2, 3.2, 1.6];
 
+
 // Define length of overlap for top/bottom halves
 tbO = 10;
 
