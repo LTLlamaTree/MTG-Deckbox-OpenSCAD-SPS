@@ -72,7 +72,7 @@ postRad = 3;
 postDep = 0.7;
 
 // Define angle of box join, in degrees above horizontal
-cutAngle = 60;
+cutAngle = 45;
 
 
 
@@ -80,7 +80,7 @@ cutAngle = 60;
 
 // Models space for the deck itself
 module cardDeck() {
-    %zmove(oShell[2]/2)
+    zmove(oShell[2]/2)
     linear_extrude(inSpace[2])
         square([
         inSpace[0], 
@@ -89,28 +89,85 @@ module cardDeck() {
         );
 }
 
+// Models space for the Toploader
+//module topLoader() {
+//    zmove(oShell[2]/2)
+//    linear_extrude(inSpace[2])
+//        square([
+//        inSpace[0], 
+//        inSpace[1]], 
+//        center = true
+//        );
+//    
+//}
 
 // Models space for the entire Box, when closed
 module totalBox() {
     linear_extrude(inSpace[2]+oShell[2])
         square([
         inSpace[0] + oShell[0],
-        inSpace[1] + oShell[1]],
-        center = true
+        inSpace[1] + oShell[1]
+        ], center = true
         );
 }
 
 
-// 
+// Models a big cuboid to cut the the box
+// If botTop is 0, this is for the BOTTOM half of the box
+// If botTop is 1, this is for the TOP half of the box
+module makeCut(botTop) {
+    // Makes sure everything stays within the confines of the relevant section of the box
+    // Moves to halfway point up box
+    zmove((inSpace[2] + oShell[2])/2)
+    // Rotates by specified angle
+    xrot(cutAngle)
+    difference() {
+        // Cuts the top of the box down
+        linear_extrude((inSpace[2]+oShell[2])*(2/3))
+            square([
+            inSpace[0] + oShell[0]+g,
+            2*(inSpace[1] + oShell[1])
+            ], center = true
+            );
+        
+        // Checks if making the cut on the bottom or the top
+        // 0 means bottom, 1 means top
+        if (!botTop) {
+            // If on bottom, re-add the inner ring of the join
+            difference() {
+                linear_extrude(tbO)
+                    square([
+                    inSpace[0] + (oShell[0]/2),
+                    (inSpace[1] + (oShell[1]/2)) / cos(cutAngle)
+                    ], center = true
+                    );
+                
+                linear_extrude(tbO)
+                    square([
+                    inSpace[0],
+                    (inSpace[1]) / cos(cutAngle)
+                    ], center = true
+                    );
+            }
+        }
+        else {
+            // If on top, re-add outer ring of join
+        }
+    }
+    
+}
 
 
 
-// Renders box
+// Renders bottom of Box
 module bottomBox() {
+    
     difference() {
         totalBox();
         
         cardDeck();
+        
+        makeCut(0);
     }
     
 }
