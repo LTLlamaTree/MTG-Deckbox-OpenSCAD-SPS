@@ -78,7 +78,9 @@ cutAngle = 40;
 
 
 
-// Models space for the entire Box, when closed
+/* 
+    Models space for the entire Box, when closed
+    */
 module totalBox() {
     linear_extrude(inSpace[2]+oShell[2])
         square([
@@ -88,7 +90,9 @@ module totalBox() {
         );
 }
 
-// Models space for the deck itself
+/* 
+    Models space for the deck itself
+*/
 module cardDeck() {
     zmove(oShell[2]/2)
     linear_extrude(inSpace[2])
@@ -113,7 +117,9 @@ module cardDeck() {
 
 
 
-// Models the big box for cutting
+/* 
+    Models the big box for cutting
+*/
 module bigCutBox() {
     *translate([
         -(inSpace[0] + oShell[0]+g)/2,
@@ -138,7 +144,9 @@ module bigCutBox() {
 }
 
 
-// Cuts the overlap for top and bottom halves
+/* 
+    Cuts the overlap for top and bottom halves
+*/
 module botTopOver(isBot) {
     skew_xy(0, cutAngle){
         // Checks if cutting bottom or top half
@@ -176,52 +184,98 @@ module botTopOver(isBot) {
 }
 
 
-// Cuts the box along the overlap, leaving the part for joining
-// If botTop is 0, this is for the BOTTOM half of the box
-// If botTop is 1, this is for the TOP half of the box
+/* 
+    Cuts the box along the overlap, leaving the part for joining
+    If botTop is 0, this is for the BOTTOM half of the box
+    If botTop is 1, this is for the TOP half of the box
+*/
 module makeCut(botTop) {
     
-    // Moves to halfway point up box
-    zmove((inSpace[2]/2 + oShell[2]) - tbO)
-    // Moves up the box by the shell and the overlap height
-    //zmove(oShell[2] + (2*tbO))
-    
+    // Moves to halfway point up box, then down half the overlap
+    // Half the overlap because it moves down on both sides
+    zmove((inSpace[2]/2 + oShell[2]) - (tbO/2))
         // Rotates by specified angle
-    xrot(cutAngle) {
-        difference() {
-            // Cuts the top of the box down
-            bigCutBox();
-            
-            // Cuts overlap for both halves
-            // Checks topBot: 0 means bottom, 1 means top
-            // Cuts the inner or outer shell accordingly
-            // Bottom keep inner half; Top keeps outer half
-            botTopOver(botTop);
-        }
-    }
+        xrot(cutAngle) 
+            difference() {
+                // Cuts the top of the box down
+                bigCutBox();
+                
+                // Cuts overlap for both halves
+                // Checks topBot: 0 means bottom, 1 means top
+                // Cuts the inner or outer shell accordingly
+                // Bottom keep inner half; Top keeps outer half
+                botTopOver(botTop);
+            }
+    
         
     
     
 }
 
 
+/* 
+    Models catch holes
+*/
+module catchHoles() {
+    
+}
 
-// Renders bottom of Box
+/* 
+    Models catch posts
+*/
+module catchPosts() {
+    intersection() {
+        // Moves to halfway point up box, then down half the overlap
+        // Half the overlap because it moves down on both sides
+        zmove((inSpace[2]/2 + oShell[2]))
+        // Rotate 
+        xrot(cutAngle) {
+            xflip_copy()
+            yflip_copy()
+                xmove((inSpace[0] + oShell[0])/2)
+                ymove((inSpace[1])/3)
+                scale([0.7,1.5,1.3])
+                #sphere(r = postRad, $fn=16);
+            
+            
+                
+        }
+        totalBox();
+    }
+}
+
+
+
+/* 
+    Renders half of Box
+    Bottom half if boxHalf = 0
+    Top half if boxHalf = 1
+*/
 module makeHalf(boxHalf) {
     
-    difference() {
-        totalBox();
+    union() {
+        difference() {
+            totalBox();
+            
+            cardDeck();
+            
+            makeCut(boxHalf);
+            
+            // If bottom half, cut catch holes
+            if (!boxHalf) catchHoles();
+        }
         
-        cardDeck();
-        
-        makeCut(boxHalf);
+        // If top half, add catch posts
+        if (boxHalf) catchPosts();
     }
+    
     
 }
 
 // Makes bottom of box
 makeHalf(0);
 
+// Moves to the side, makes top half of box
 xmove(1.2*(inSpace[0] + oShell[0]))
     makeHalf(1);
     
