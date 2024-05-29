@@ -35,9 +35,10 @@
 include <BOSL/constants.scad>
 use <BOSL/shapes.scad>
 use <BOSL/transforms.scad>
+use <sps/parallelepiped.scad>
 
 // Gamma for making things render nicely
-g = 0.005;
+g = 0.05;
 // Rho for accounting for material expansion
 p = 0.4;
 
@@ -72,11 +73,20 @@ postRad = 3;
 postDep = 0.7;
 
 // Define angle of box join, in degrees above horizontal
-cutAngle = 45;
+cutAngle = 40;
 
 
 
 
+// Models space for the entire Box, when closed
+module totalBox() {
+    linear_extrude(inSpace[2]+oShell[2])
+        square([
+        inSpace[0] + oShell[0],
+        inSpace[1] + oShell[1]
+        ], center = true
+        );
+}
 
 // Models space for the deck itself
 module cardDeck() {
@@ -101,79 +111,120 @@ module cardDeck() {
 //    
 //}
 
-// Models space for the entire Box, when closed
-module totalBox() {
-    linear_extrude(inSpace[2]+oShell[2])
-        square([
-        inSpace[0] + oShell[0],
-        inSpace[1] + oShell[1]
-        ], center = true
-        );
-}
 
 
-// Models a big cuboid to cut the the box
-// If botTop is 0, this is for the BOTTOM half of the box
-// If botTop is 1, this is for the TOP half of the box
-module makeCut(botTop) {
-    // Makes sure everything stays within the confines of the relevant section of the box
-    // Moves to halfway point up box
-    zmove((inSpace[2] + oShell[2])/2)
-    // Rotates by specified angle
-    xrot(cutAngle)
+// Models the big box for cutting
+module bigCutBox() {
+    *translate([
+        -(inSpace[0] + oShell[0]+g)/2,
+        -(inSpace[1] + oShell[1]+g)/2,
+        0
+        ])
+    parallelepiped(
+        inSpace[0] + oShell[0] + (2*g),
+        inSpace[1] + oShell[1] + (2*g),
+        inSpace[2],
+        inSpace[2]-(4*tbO)
+    );
+    
     difference() {
-        // Cuts the top of the box down
-        linear_extrude((inSpace[2]+oShell[2])*(2/3))
+        linear_extrude((inSpace[2]+oShell[2]))
             square([
             inSpace[0] + oShell[0]+g,
             2*(inSpace[1] + oShell[1])
             ], center = true
             );
-        
-        // Checks if making the cut on the bottom or the top
-        // 0 means bottom, 1 means top
-        if (!botTop) {
-            // If on bottom, re-add the inner ring of the join
+    }
+}
+
+
+// Cuts the overlap for top and bottom halves
+module botTopOver(isBot) {
+    skew_xy(0, cutAngle){
+        // Checks if cutting bottom or top half
+        if (!isBot) {
+            // Cutting bottom half: need to leave inner portion of shell
+            // Pass back an inner extrude
+            linear_extrude(tbO+g)
+                square([
+                inSpace[0] + (oShell[0]/2),
+                (inSpace[1] + (oShell[1]/2)) / cos(cutAngle)
+                ], center = true
+                );
+            
+        }
+        else {
+            // Cutting top half: need to leave outer portion of shell
+            // Subtract a smaller, inner extrude from an outer extrude
             difference() {
                 linear_extrude(tbO)
                     square([
-                    inSpace[0] + (oShell[0]/2),
-                    (inSpace[1] + (oShell[1]/2)) / cos(cutAngle)
+                    inSpace[0] + oShell[0] + g,
+                    (inSpace[1] + oShell[1]) / cos(cutAngle)
                     ], center = true
                     );
                 
-                linear_extrude(tbO)
+                linear_extrude(tbO+g)
                     square([
-                    inSpace[0],
-                    (inSpace[1]) / cos(cutAngle)
+                    inSpace[0] + (oShell[0]/2) + p,
+                    (inSpace[1] + (oShell[1]/2) + p) / cos(cutAngle)
                     ], center = true
                     );
             }
         }
-        else {
-            // If on top, re-add outer ring of join
+    }
+}
+
+
+// Cuts the box along the overlap, leaving the part for joining
+// If botTop is 0, this is for the BOTTOM half of the box
+// If botTop is 1, this is for the TOP half of the box
+module makeCut(botTop) {
+    
+    // Moves to halfway point up box
+    zmove((inSpace[2]/2 + oShell[2]) - tbO)
+    // Moves up the box by the shell and the overlap height
+    //zmove(oShell[2] + (2*tbO))
+    
+        // Rotates by specified angle
+    xrot(cutAngle) {
+        difference() {
+            // Cuts the top of the box down
+            bigCutBox();
+            
+            // Cuts overlap for both halves
+            // Checks topBot: 0 means bottom, 1 means top
+            // Cuts the inner or outer shell accordingly
+            // Bottom keep inner half; Top keeps outer half
+            botTopOver(botTop);
         }
     }
+        
+    
     
 }
 
 
 
 // Renders bottom of Box
-module bottomBox() {
+module makeHalf(boxHalf) {
     
     difference() {
         totalBox();
         
         cardDeck();
         
-        makeCut(0);
+        makeCut(boxHalf);
     }
     
 }
 
+// Makes bottom of box
+makeHalf(0);
 
-bottomBox();
+xmove(1.2*(inSpace[0] + oShell[0]))
+    makeHalf(1);
+    
 
 
 
