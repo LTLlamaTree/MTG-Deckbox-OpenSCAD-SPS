@@ -47,11 +47,11 @@ p = 0.4;
 testActive = false;
 
 // Define scale factor for testing
-testScale = testActive ? 0.4 : 1.0;
+testScale = testActive ? 0.5 : 1.0;
 
 
 // Define space for Deck
-inSpace = [68*testScale, 78*testScale, (testActive ? 12 : 100)];
+inSpace = [68*testScale, 78*testScale, 100*testScale];
 
 // Define Big Sleeve dimensions
 bigSlev = [2, 76*testScale, 103];
@@ -95,7 +95,7 @@ module totalBox() {
 */
 module cardDeck() {
     zmove(oShell[2]/2)
-    linear_extrude(inSpace[2])
+    linear_extrude(inSpace[2] + oShell[2])
         square([
         inSpace[0], 
         inSpace[1]], 
@@ -193,7 +193,7 @@ module makeCut(botTop) {
     
     // Moves to halfway point up box, then down half the overlap
     // Half the overlap because it moves down on both sides
-    zmove((inSpace[2]/2 + oShell[2]) - (tbO/2))
+    zmove((inSpace[2]/2) + oShell[2] - (tbO/2))
         // Rotates by specified angle
         xrot(cutAngle) 
             difference() {
@@ -218,6 +218,31 @@ module makeCut(botTop) {
 */
 module catchHoles() {
     
+    // Moves to halfway point up box, then down half the overlap
+    // Half the overlap because it moves down on both sides
+    zmove((inSpace[2]/2) + oShell[2] - (tbO/2))
+        intersection() {
+            // Move back up some of the overlap for holes
+            zmove(tbO/2)
+            // Then rotate
+            xrot(cutAngle) 
+            // Copy hole 4x
+            xflip_copy()
+            yflip_copy()
+                // Move hole to correct location
+                zmove(tbO/8)
+                xmove((inSpace[0]/2)-p)
+                ymove((inSpace[1])/3)
+                scale([0.6,1.5,1.3])
+                yrot(90)
+                cylinder(h=postRad, r = postRad, $fn=16);
+            
+            // Rotate the bouding box
+            xrot(cutAngle) 
+            botTopOver(0);
+        }
+        
+    
 }
 
 /* 
@@ -228,18 +253,22 @@ module catchPosts() {
         // Moves to halfway point up box, then down half the overlap
         // Half the overlap because it moves down on both sides
         zmove((inSpace[2]/2 + oShell[2]))
-        // Rotate 
+        // Rotate by angle
         xrot(cutAngle) {
+            
+            // Make posts
             xflip_copy()
             yflip_copy()
+                zmove(tbO/8)
                 xmove((inSpace[0] + oShell[0])/2)
                 ymove((inSpace[1])/3)
-                scale([0.7,1.5,1.3])
-                #sphere(r = postRad, $fn=16);
+                scale([0.7,1.5,1.5])
+                sphere(r = postRad, $fn=16);
             
             
                 
         }
+        // Intersect with the box edge to ensure nothing outside
         totalBox();
     }
 }
@@ -278,6 +307,9 @@ makeHalf(0);
 // Moves to the side, makes top half of box
 xmove(1.2*(inSpace[0] + oShell[0]))
     makeHalf(1);
+
+*catchHoles();
+*catchPosts();
     
 
 
