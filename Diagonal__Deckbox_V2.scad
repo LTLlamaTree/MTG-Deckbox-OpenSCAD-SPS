@@ -75,6 +75,9 @@ postDep = 0.7;
 // Define angle of box join, in degrees above horizontal
 cutAngle = 40;
 
+// Define scale factors for catch poles/holes
+catchScale = [0.7, 1.4, 1.3];
+
 
 
 
@@ -82,7 +85,7 @@ cutAngle = 40;
     Models space for the entire Box, when closed
     */
 module totalBox() {
-    linear_extrude(inSpace[2]+oShell[2])
+    linear_extrude(inSpace[2]+oShell[2], convexity = 10)
         square([
         inSpace[0] + oShell[0],
         inSpace[1] + oShell[1]
@@ -231,9 +234,9 @@ module catchHoles() {
             yflip_copy()
                 // Move hole to correct location
                 zmove(tbO/8)
-                xmove((inSpace[0]/2)-p)
+                xmove((inSpace[0]/2)+p)
                 ymove((inSpace[1])/3)
-                scale([0.6,1.5,1.3])
+                scale(catchScale)
                 yrot(90)
                 cylinder(h=postRad, r = postRad, $fn=16);
             
@@ -262,7 +265,7 @@ module catchPosts() {
                 zmove(tbO/8)
                 xmove((inSpace[0] + oShell[0])/2)
                 ymove((inSpace[1])/3)
-                scale([0.7,1.5,1.5])
+                scale(catchScale)
                 sphere(r = postRad, $fn=16);
             
             
@@ -308,8 +311,7 @@ makeHalf(0);
 xmove(1.2*(inSpace[0] + oShell[0]))
     makeHalf(1);
 
-*catchHoles();
-*catchPosts();
+
     
 
 
