@@ -51,7 +51,7 @@ testScale = testActive ? 0.5 : 1.0;
 
 
 // Define space for Deck
-inSpace = [68*testScale, 78*testScale, 100*testScale];
+inSpace = [68*testScale, 78*testScale, 95*testScale];
 
 // Define Big Sleeve dimensions
 bigSlev = [2, 76*testScale, 103];
@@ -60,7 +60,7 @@ slevEdge = 3;
 
 // Define shell dimensions
     // This is the total shell; each wall is half this
-oShell = [3.2, 3.2, 3.2];
+oShell = 1.5*[3.2, 3.2, 3.2];
 
 
 // Define length of overlap for top/bottom halves
@@ -85,11 +85,19 @@ catchScale = [0.7, 1.4, 1.3];
     Models space for the entire Box, when closed
     */
 module totalBox() {
-    linear_extrude(inSpace[2]+oShell[2], convexity = 10)
+    *linear_extrude(inSpace[2]+oShell[2], convexity = 10)
         square([
         inSpace[0] + oShell[0],
         inSpace[1] + oShell[1]
         ], center = true
+        );
+    
+    cuboid([
+        inSpace[0] + oShell[0],
+        inSpace[1] + oShell[1],
+        (inSpace[2]+oShell[2])
+        ], align = V_TOP,
+        fillet = 1.2, $fn=16
         );
 }
 
@@ -139,11 +147,14 @@ module bigCutBox() {
     difference() {
         linear_extrude((inSpace[2]+oShell[2]))
             square([
-            inSpace[0] + oShell[0]+g,
+            inSpace[0] + oShell[0]+p,
             2*(inSpace[1] + oShell[1])
             ], center = true
             );
     }
+    
+    
+        
 }
 
 
@@ -194,9 +205,8 @@ module botTopOver(isBot) {
 */
 module makeCut(botTop) {
     
-    // Moves to halfway point up box, then down half the overlap
-    // Half the overlap because it moves down on both sides
-    zmove((inSpace[2]/2) + oShell[2] - (tbO/2))
+    // Moves to halfway point up box, then down by the overlap
+    zmove((inSpace[2]/2) + oShell[2] - tbO)
         // Rotates by specified angle
         xrot(cutAngle) 
             difference() {
@@ -221,9 +231,9 @@ module makeCut(botTop) {
 */
 module catchHoles() {
     
-    // Moves to halfway point up box, then down half the overlap
+    // Moves to halfway point up box, then down by the overlap
     // Half the overlap because it moves down on both sides
-    zmove((inSpace[2]/2) + oShell[2] - (tbO/2))
+    zmove((inSpace[2]/2) + oShell[2] - tbO)
         intersection() {
             // Move back up some of the overlap for holes
             zmove(tbO/2)
@@ -234,7 +244,7 @@ module catchHoles() {
             yflip_copy()
                 // Move hole to correct location
                 zmove(tbO/8)
-                xmove((inSpace[0]/2)+p)
+                xmove((inSpace[0]/2)+(2*p))
                 ymove((inSpace[1])/3)
                 scale(catchScale)
                 yrot(90)
@@ -255,7 +265,7 @@ module catchPosts() {
     intersection() {
         // Moves to halfway point up box, then down half the overlap
         // Half the overlap because it moves down on both sides
-        zmove((inSpace[2]/2 + oShell[2]))
+        zmove((inSpace[2]/2) + oShell[2] - (tbO/2))
         // Rotate by angle
         xrot(cutAngle) {
             
@@ -305,10 +315,10 @@ module makeHalf(boxHalf) {
 }
 
 // Makes bottom of box
-makeHalf(0);
+makeHalf(1);
 
 // Moves to the side, makes top half of box
-xmove(1.2*(inSpace[0] + oShell[0]))
+*xmove(1.2*(inSpace[0] + oShell[0]))
     makeHalf(1);
 
 
